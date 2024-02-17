@@ -64,31 +64,32 @@ struct ContentView: View {
     
     var body: some View {
         NavigationView {
-            VStack {
-                VStack(spacing: 16)  {
-                    TextField("New Task", text: $task)
+            ZStack {
+                VStack {
+                    VStack(spacing: 16)  {
+                        TextField("New Task", text: $task)
+                            .padding()
+                            .background(Color(UIColor.systemGray6))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                        
+                        Button {
+                            addItem()
+                        } label: {
+                            Spacer()
+                            Text("SAVE")
+                            Spacer()
+                        }
+                        .disabled(isButtonDisabled)
                         .padding()
-                        .background(Color(UIColor.systemGray6))
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .background(isButtonDisabled ? Color.gray : Color.pink)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
-                    
-                    Button {
-                        addItem()
-                    } label: {
-                        Spacer()
-                        Text("SAVE")
-                        Spacer()
                     }
-                    .disabled(isButtonDisabled)
                     .padding()
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                    .background(isButtonDisabled ? Color.gray : Color.pink)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                }
-                .padding()
-                
-                List {
-                    ForEach(items) { item in
+                    
+                    List {
+                        ForEach(items) { item in
                             VStack(alignment: .leading) {
                                 Text(item.task ?? "")
                                     .font(.headline)
@@ -97,27 +98,38 @@ struct ContentView: View {
                                 Text("Item at \(item.timestamp!, formatter: itemFormatter)")
                                     .font(.footnote)
                                     .foregroundStyle(.gray)
+                            }
                         }
+                        .onDelete(perform: deleteItems)
                     }
-                    .onDelete(perform: deleteItems)
+                    .listStyle(InsetGroupedListStyle())
+                    .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.3), radius: 12)
+                    .padding(.vertical, 0)
+                    .frame(maxWidth: 640) // will remove default vertical padding, and maximise list on iPad devices
+                    .scrollContentBackground(.hidden)
+                    .background(.clear)
                 }
+                
             }
+//            .onAppear {
+//                UITableView.appearance().backgroundColor = UIColor.clear
+//            }
+            
             .navigationTitle("Daily Tasks")
             .navigationBarTitleDisplayMode(.large)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        EditButton()
-                    }
-//                    ToolbarItem {
-//                        Button(action: addItem) {
-//                            Label("Add Item", systemImage: "plus")
-//                        }
-//                    }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    EditButton()
                 }
             }
-            Text("Select an item")
+            .background(BackgroundImageView())
+            .background(
+                backgroundGradient.ignoresSafeArea(.all))
         }
+        .navigationViewStyle(StackNavigationViewStyle())
+//        Text("Select an item")
     }
+}
 
 
 
