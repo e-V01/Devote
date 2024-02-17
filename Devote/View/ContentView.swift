@@ -11,6 +11,10 @@ import CoreData
 struct ContentView: View {
     // MARK: - PROP
     @State var task: String = ""
+    
+    private var isButtonDisabled: Bool { //checks wehther textField isEmpty (Bool)
+        task.isEmpty
+    }
     // MARK: - FETCHING DATA (managed object context entirely in RAM)
     
     @Environment(\.managedObjectContext) private var viewContext
@@ -72,6 +76,7 @@ struct ContentView: View {
                         Text("SAVE")
                         Spacer()
                     }
+                    .disabled(isButtonDisabled)
                     .padding()
                     .font(.headline)
                     .foregroundStyle(.white)
