@@ -43,6 +43,8 @@ struct ContentView: View {
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
+            task = ""
+            hideKeyboard()
         }
     }
     
@@ -80,7 +82,7 @@ struct ContentView: View {
                     .padding()
                     .font(.headline)
                     .foregroundStyle(.white)
-                    .background(Color.pink)
+                    .background(isButtonDisabled ? Color.gray : Color.pink)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
                 .padding()
@@ -106,11 +108,11 @@ struct ContentView: View {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         EditButton()
                     }
-                    ToolbarItem {
-                        Button(action: addItem) {
-                            Label("Add Item", systemImage: "plus")
-                        }
-                    }
+//                    ToolbarItem {
+//                        Button(action: addItem) {
+//                            Label("Add Item", systemImage: "plus")
+//                        }
+//                    }
                 }
             }
             Text("Select an item")
