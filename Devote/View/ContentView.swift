@@ -11,10 +11,8 @@ import CoreData
 struct ContentView: View {
     // MARK: - PROP
     @State var task: String = ""
+    @State private var showNewTaskItem: Bool = false
     
-    private var isButtonDisabled: Bool { //checks wehther textField isEmpty (Bool)
-        task.isEmpty
-    }
     // MARK: - FETCHING DATA (managed object context entirely in RAM)
     
     @Environment(\.managedObjectContext) private var viewContext
@@ -28,25 +26,7 @@ struct ContentView: View {
     
     // MARK: - Func
     
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
-            newItem.task = task
-            newItem.completion = false
-            newItem.id = UUID()
-            
-            do {
-                try viewContext.save()
-            } catch {
-                
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-            task = ""
-            hideKeyboard()
-        }
-    }
+    
     
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
@@ -65,29 +45,28 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             ZStack {
+                // Main View
                 VStack {
-                    VStack(spacing: 16)  {
-                        TextField("New Task", text: $task)
-                            .padding()
-                            .background(Color(UIColor.systemGray6))
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                        
-                        Button {
-                            addItem()
-                        } label: {
-                            Spacer()
-                            Text("SAVE")
-                            Spacer()
-                        }
-                        .disabled(isButtonDisabled)
-                        .padding()
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                        .background(isButtonDisabled ? Color.gray : Color.pink)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    // HEADER
+                    Spacer(minLength: 35)
+                    // New  TASK BUTTON
+                    Button {
+                        showNewTaskItem = true
+                    } label: {
+                        Image(systemName: "plus.circle")
+                            .font(.system(size: 30, weight: .semibold, design: .rounded))
+                        Text("New Task")
+                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                            
                     }
-                    .padding()
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 15)
+                    .background(LinearGradient(gradient: Gradient(colors: [Color.pink, Color.blue]), startPoint: .leading, endPoint: .trailing)
+                        .clipShape(Capsule()))
+                    .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.25), radius: 8, x: 0.0, y: 4.0)
                     
+                    //TASKS
                     List {
                         ForEach(items) { item in
                             VStack(alignment: .leading) {
@@ -98,7 +77,7 @@ struct ContentView: View {
                                 Text("Item at \(item.timestamp!, formatter: itemFormatter)")
                                     .font(.footnote)
                                     .foregroundStyle(.gray)
-                            }
+                            } // LIST ITEM
                         }
                         .onDelete(perform: deleteItems)
                     }
@@ -109,7 +88,15 @@ struct ContentView: View {
                     .scrollContentBackground(.hidden)
                     .background(.clear)
                 }
-                
+                if showNewTaskItem {
+                    BlankView()
+                        .onTapGesture {
+                            withAnimation() {
+                                showNewTaskItem = false
+                            }
+                        }
+                    NewTaskItemView(isShowing: $showNewTaskItem)
+                }
             }
 //            .onAppear {
 //                UITableView.appearance().backgroundColor = UIColor.clear
