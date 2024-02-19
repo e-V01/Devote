@@ -73,6 +73,7 @@ struct NewTaskItemView: View {
             .frame(maxWidth: 640)
         }
         .padding()
+        .padding(.bottom, -30)
     }
 }
 

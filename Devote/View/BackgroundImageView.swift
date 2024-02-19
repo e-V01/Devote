@@ -10,7 +10,7 @@ import SwiftUI
 struct BackgroundImageView: View {
     var body: some View {
         Image("rocket")
-            .antialiased(true) // keeps ration of image smotthly when it gets smaller or bigger
+            .antialiased(true) // keeps ration of image smoothly when it gets smaller or bigger
             .resizable()
             .scaledToFill()
             .ignoresSafeArea(.all)
